@@ -16,7 +16,9 @@ router.post("/signup", async (req, res) => {
   if (error) return res.status(400).send(error.details[0].message);
 
   try {
-    const userId = await userService.addUser(value.username, value.password); // New User should be added to the database by service
+    const hashed = bcrypt.hashSync(value.password, 10);
+    const userId = await userService.addUser(value.username, hashed); // New User should be added to the database by service
+
     return res
       .status(201)
       .send({ message: "User created successfully", userId });
@@ -39,14 +41,21 @@ router.post("/login", async (req, res) => {
   if (error) return res.status(400).send(error.details[0].message);
 
   try {
-    const user = await userService.getUser(valu.username);
+    const user = await userService.getUser(value.username);
     if (!user.success) {
       return res.status(user.status).send(user.error);
     }
+
     if (bcrypt.compareSync(value.password, user.password)) {
-      jwt.sign({ userId: user.userId }, config.secretKey, {
+      const token = jwt.sign({ userId: user.userId }, config.secretKey, {
         expiresIn: config.expiresIn,
       });
+
+      return res
+        .header({ accessToken: token })
+        .send(
+          "Successfully authorized! Token sent in header with key 'accessToken'"
+        );
     }
   } catch (err) {
     console.log(
