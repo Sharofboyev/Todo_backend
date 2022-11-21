@@ -7,7 +7,7 @@ const auth = require("../middlewares/auth");
 //This router will divide requests to specific controllers
 router.use("/user", userController);
 
-router.use("/todos", auth, todosController);
+router.use("/todos", todosController);
 
 router.use("/files", auth, filesController);
 

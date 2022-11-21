@@ -1,3 +1,5 @@
+const todosModel = require("../models/todos");
+
 class Todos {
   async getAll(limit, offset = 0) {}
 
