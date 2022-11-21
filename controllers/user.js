@@ -13,7 +13,7 @@ router.post("/signup", async (req, res) => {
     password: Joi.string().min(5).max(256).required(),
   }).validate(req.body);
 
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) return res.status(400).send({success: false, error: error.details[0].message});
 
   try {
     const hashed = bcrypt.hashSync(value.password, 10);
@@ -21,14 +21,10 @@ router.post("/signup", async (req, res) => {
 
     return res
       .status(201)
-      .send({ message: "User created successfully", userId });
+      .send({ success: true, userId });
   } catch (err) {
-    console.log(
-      `${new Date().toDateString()}  Error in user controller -> signup. Error message: ${
-        err.message
-      }`
-    );
-    return res.status(500).send("Internal server error occured");
+    console.error(err);
+    return res.status(500).send({success: false, error: "Internal server error occured"});
   }
 });
 
@@ -38,12 +34,12 @@ router.post("/login", async (req, res) => {
     password: Joi.string().min(5).max(256).required(),
   }).validate(req.body);
 
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) return res.status(400).send({success: false, error: error.details[0].message});
 
   try {
     const user = await userService.getUser(value.username);
     if (!user.success) {
-      return res.status(user.status).send(user.error);
+      return res.status(user.status).send({success: false, error: user.error});
     }
 
     if (bcrypt.compareSync(value.password, user.password)) {
@@ -53,17 +49,14 @@ router.post("/login", async (req, res) => {
 
       return res
         .header({ accessToken: token })
-        .send(
-          "Successfully authorized! Token sent in header with key 'accessToken'"
-        );
+        .send({
+          success: true,
+          message: "Successfully authorized! Token sent in header with key 'accessToken'"
+        });
     }
   } catch (err) {
-    console.log(
-      `${new Date().toDateString()}  Error in user controller -> login. Error message: ${
-        err.message
-      }`
-    );
-    return res.status(500).send("Internal server error occured");
+    console.error(err);
+    return res.status(500).send({success: false, error: "Internal server error occured"});
   }
 });
 

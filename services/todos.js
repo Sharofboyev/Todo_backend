@@ -1,11 +1,16 @@
 const todosModel = require("../models/todos");
-
 class Todos {
-  async getAll(limit, offset = 0) {}
+  getAll(limit, offset) {
+    return todosModel.get(+limit, +offset);
+  }
 
-  async getOne(id) {}
+  async getOne(id) {
+    return todosModel.get(null, null, id)
+  }
 
-  async create(createTodoDto) {}
+  create(createTodoDto) {
+    return todosModel.create(createTodoDto)
+  }
 
   async update(updateTodoDto) {}
 

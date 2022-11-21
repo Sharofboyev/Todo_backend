@@ -5,6 +5,10 @@ const app = express();
 
 app.use(express.json());
 app.use(router);
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send({success: false, error: "Internal server error"});
+})
 
 app.listen(config.appPort, () => {
   console.log(`Listening on port ${config.appPort}...`);
