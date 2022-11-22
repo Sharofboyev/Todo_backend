@@ -1,52 +1,47 @@
-const mongoose = require("mongoose");
-const config = require("../config");
-
-mongoose.connect(config.dbConnectionString)
-  .then((data) => {
-    console.log("Database connected succesfully");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+const mongoose = require("./index");
 
 const CreateSchema = new mongoose.Schema({
   header: {
     type: String,
-    required: true
+    required: true,
   },
   content: {
     type: String,
-    required: true
+    required: true,
   },
   time: Date,
-  files: Array
+  files: Array,
+  userId: mongoose.Types.ObjectId,
 });
 
-const TodosModel = mongoose.model('todos', CreateSchema);
+const TodosModel = mongoose.model("todos", CreateSchema);
 
-async function create(data){
+async function create(data) {
   const newTodo = new TodosModel(data);
-  return (await newTodo.save());
+  return await newTodo.save();
 }
 
-function get(limit, offset, id){
-  const allTodos = TodosModel.find(id ? {_id: id}: null);
-  if (limit > 0)
-    allTodos = allTodos.limit(limit);
-  if (offset > 0)
-    allTodos = allTodos.skip(offset);
+function get(limit, offset, userId) {
+  const allTodos = TodosModel.find({ userId: userId });
+  if (limit > 0) allTodos = allTodos.limit(limit);
+  if (offset > 0) allTodos = allTodos.skip(offset);
   return allTodos;
 }
 
-async function update(id, todo){
-  return TodosModel.updateOne({_id: id}, todo);
+function getOne(id) {
+  return TodosModel.findById(id);
 }
 
-async function remove(id){
-  return TodosModel.deleteOne({_id: id});
+function update(id, todo) {
+  return TodosModel.updateOne({ _id: id }, todo);
+}
+
+function remove(id) {
+  return TodosModel.deleteOne({ _id: id });
 }
 
 module.exports.create = create;
 module.exports.get = get;
+module.exports.getOne = getOne;
 module.exports.update = update;
-module.exports.remove = remove
+module.exports.remove = remove;
