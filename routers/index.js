@@ -9,6 +9,6 @@ router.use("/user", userController);
 
 router.use("/todos", todosController);
 
-router.use("/files", auth, filesController);
+router.use("/files", filesController);
 
 module.exports = router;

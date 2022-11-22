@@ -2,7 +2,7 @@ const router = require("express").Router();
 const Todo = require("../services/todos");
 const todoService = new Todo();
 const Joi = require("joi");
-const { isValidObjectId, Types } = require("mongoose");
+const { isValidObjectId } = require("mongoose");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -33,7 +33,7 @@ router.post("/", async (req, res, next) => {
   const { error, value } = Joi.object({
     header: Joi.string().required().min(2).max(64),
     content: Joi.string().required().max(1024),
-    files: Joi.array().optional(),
+    files: Joi.array().items(Joi.string()).optional(),
     time: Joi.date().optional(),
   }).validate(req.body);
 
@@ -59,7 +59,7 @@ router.patch("/:id", async (req, res, next) => {
   const { error, value } = Joi.object({
     header: Joi.string().optional().min(2).max(64),
     content: Joi.string().optional().max(1024),
-    files: Joi.array().optional(),
+    files: Joi.array().items(Joi.string().required()).optional(),
     time: Joi.date().optional(),
   }).validate(req.body);
 
@@ -81,9 +81,10 @@ router.patch("/:id", async (req, res, next) => {
       return next(err);
     }
   } else
-    return res
-      .status(400)
-      .send({ success: false, error: "There is no field to update" });
+    return res.status(400).send({
+      success: false,
+      error: "At least one field should exist to update",
+    });
 });
 
 router.delete("/:id", async (req, res, next) => {

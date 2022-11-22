@@ -45,9 +45,9 @@ router.post("/login", async (req, res, next) => {
   try {
     const user = await userService.getUser(value.username);
     if (!user)
-      return res.status(403).send({
+      return res.status(404).send({
         success: false,
-        error: "Given username or password is incorrect",
+        error: "User with given username not found",
       });
 
     if (bcrypt.compareSync(value.password, user.password)) {

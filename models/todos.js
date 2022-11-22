@@ -10,7 +10,7 @@ const CreateSchema = new mongoose.Schema({
     required: true,
   },
   time: Date,
-  files: Array,
+  files: [String],
   userId: mongoose.Types.ObjectId,
 });
 
