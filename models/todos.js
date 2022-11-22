@@ -26,7 +26,7 @@ const TodosModel = mongoose.model('todos', CreateSchema);
 
 async function create(data){
   const newTodo = new TodosModel(data);
-  await newTodo.save();
+  return (await newTodo.save());
 }
 
 function get(limit, offset, id){

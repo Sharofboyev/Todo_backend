@@ -31,8 +31,8 @@ router.post("/", async (req, res, next) => {
   if (error) return res.status(400).send({success: false, error: error.details[0].message});
 
   try {
-    await todoService.create(req.body);
-    return res.send({success: true});
+    const data = await todoService.create(req.body);
+    return res.send({success: true, data});
   }catch(err){
     return next(err);
   }
