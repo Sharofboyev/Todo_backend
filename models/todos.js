@@ -29,7 +29,7 @@ async function create(data){
   await newTodo.save();
 }
 
-async function get(limit, offset, id){
+function get(limit, offset, id){
   const allTodos = TodosModel.find(id ? {_id: id}: null);
   if (limit > 0)
     allTodos = allTodos.limit(limit);
@@ -38,5 +38,15 @@ async function get(limit, offset, id){
   return allTodos;
 }
 
+async function update(id, todo){
+  return TodosModel.updateOne({_id: id}, todo);
+}
+
+async function remove(id){
+  return TodosModel.deleteOne({_id: id});
+}
+
 module.exports.create = create;
 module.exports.get = get;
+module.exports.update = update;
+module.exports.remove = remove

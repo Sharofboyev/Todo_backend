@@ -12,9 +12,13 @@ class Todos {
     return todosModel.create(createTodoDto)
   }
 
-  async update(updateTodoDto) {}
+  async update(id, updateTodoDto) {
+    return todosModel.update(id, updateTodoDto);
+  }
 
-  async remove(id) {}
+  async remove(id) {
+    return todosModel.remove(id);
+  }
 }
 
 module.exports = Todos;
