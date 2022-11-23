@@ -70,7 +70,11 @@ router.patch("/:id", async (req, res, next) => {
 
   if (Object.keys(value).length > 0) {
     try {
-      const updateStatus = await todoService.update(req.params.id, req.body);
+      const updateStatus = await todoService.update(
+        req.params.id,
+        req.body,
+        req.userId
+      );
       if (updateStatus.matchedCount > 0) {
         return res.send({ success: true });
       }
@@ -94,7 +98,7 @@ router.delete("/:id", async (req, res, next) => {
       .send({ success: false, error: "Received object id is not valid" });
 
   try {
-    const deleteStatus = await todoService.remove(req.params.id);
+    const deleteStatus = await todoService.remove(req.params.id, req.userId);
     if (deleteStatus.deletedCount > 0) {
       return res.send({ success: true });
     }

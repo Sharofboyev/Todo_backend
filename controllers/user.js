@@ -70,4 +70,13 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
+router.delete("/account", async (req, res, next) => {
+  try {
+    await userService.deleteUser(req.userId);
+    return res.send({ success: true });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;

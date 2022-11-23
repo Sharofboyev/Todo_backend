@@ -5,6 +5,7 @@ const File = require("../services/file");
 const FileService = new File();
 const { isValidObjectId } = require("mongoose");
 const path = require("path");
+const fs = require("fs");
 
 router.post("/", upload.array("files", 10), async (req, res) => {
   const fileArray = [];
@@ -13,14 +14,15 @@ router.post("/", upload.array("files", 10), async (req, res) => {
     files[i].filename = files[i].originalname;
     try {
       const fileData = await FileService.create(files[i]);
-      fileArray.push({ success: true, fileData });
+      fileArray.push({ uploaded: true, fileData });
     } catch (err) {
       fileArray.push({
-        success: false,
+        uploaded: false,
         fileData: {
-          filename: files[i].originalname,
+          filename: files[i].filename,
           size: files[i].size,
           mimetype: files[i].mimetype,
+          error: err.message,
         },
       });
     }
@@ -28,19 +30,44 @@ router.post("/", upload.array("files", 10), async (req, res) => {
   return res.send({ success: true, files: fileArray });
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res, next) => {
   if (!isValidObjectId(req.params.id))
     return res
       .status(400)
       .send({ success: false, error: "Provided fileId is not valid" });
-  const file = await FileService.getFile(req.params.id);
-  if (!file)
-    return res
-      .status(404)
-      .send({ success: false, error: "File with given fileId not found" });
-  res.sendFile(path.resolve(file.path));
+
+  try {
+    const file = await FileService.getFile(req.params.id);
+    if (!file)
+      return res
+        .status(404)
+        .send({ success: false, error: "File with given fileId not found" });
+    else return res.sendFile(path.resolve(file.path));
+  } catch (err) {
+    return next(err);
+  }
 });
 
-router.delete("/", (req, res) => {});
+router.delete("/:id", async (req, res, next) => {
+  if (!isValidObjectId(req.params.id))
+    return res
+      .status(400)
+      .send({ success: false, error: "Provided fileId is not valid" });
+  try {
+    const file = await FileService.getFile(req.params.id);
+    if (!file)
+      return res
+        .status(404)
+        .send({ success: false, error: "File with given fileId not found" });
+    else {
+      const filePath = path.resolve(file.path);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      await FileService.removeFile(req.params.id);
+      return res.send({ success: true });
+    }
+  } catch (err) {
+    return next(err);
+  }
+});
 
 module.exports = router;

@@ -18,6 +18,10 @@ class User {
   }
 
   async updatePassword(username, password) {}
+
+  deleteUser(userId) {
+    return userModel.remove(userId);
+  }
 }
 
 module.exports = User;

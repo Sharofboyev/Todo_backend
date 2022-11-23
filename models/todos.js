@@ -32,12 +32,12 @@ function getOne(id) {
   return TodosModel.findById(id);
 }
 
-function update(id, todo) {
-  return TodosModel.updateOne({ _id: id }, todo);
+function update(id, todo, userId) {
+  return TodosModel.updateOne({ _id: id, userId: userId }, todo);
 }
 
-function remove(id) {
-  return TodosModel.deleteOne({ _id: id });
+function remove(id, userId) {
+  return TodosModel.deleteOne({ _id: id, userId });
 }
 
 module.exports.create = create;

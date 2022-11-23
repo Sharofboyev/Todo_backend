@@ -12,12 +12,12 @@ class Todos {
     return todosModel.create(createTodoDto);
   }
 
-  async update(id, updateTodoDto) {
-    return todosModel.update(id, updateTodoDto);
+  async update(id, updateTodoDto, userId) {
+    return todosModel.update(id, updateTodoDto, userId);
   }
 
-  async remove(id) {
-    return todosModel.remove(id);
+  async remove(id, userId) {
+    return todosModel.remove(id, userId);
   }
 }
 

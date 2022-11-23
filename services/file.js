@@ -5,6 +5,10 @@ class File {
     return fileModel.get(fileId);
   }
 
+  getAllFiles(userId) {
+    return fileModel.getAll(userId);
+  }
+
   create(file) {
     return fileModel.create(file);
   }

@@ -15,6 +15,7 @@ const CreateSchema = new mongoose.Schema({
     type: Date,
     default: new Date(),
   },
+  userId: { type: String, required: true },
 });
 
 const FileModel = mongoose.model("files", CreateSchema);
@@ -25,8 +26,11 @@ async function create(data) {
 }
 
 function get(id) {
-  const file = FileModel.findById(id);
-  return file;
+  return FileModel.findById(id);
+}
+
+function getAll(userId) {
+  return FileModel.find({ userId: userId });
 }
 
 function update(id, file) {
@@ -41,3 +45,4 @@ module.exports.create = create;
 module.exports.get = get;
 module.exports.update = update;
 module.exports.remove = remove;
+module.exports.getAll = getAll;
