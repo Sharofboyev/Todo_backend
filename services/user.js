@@ -8,18 +8,19 @@ class User {
    * @param {string} password - password of user hashed with bcrypt
    * @returns {Promise <ObjectId>} userId in the database
    */
-  async addUser(username, password) {
-    const user = await userModel.create({ username, password });
-    return user._id;
+  async create(user) {
+    return (await userModel.create(user))._id;
   }
 
-  getUser(userName) {
+  get(userName) {
     return userModel.get(userName);
   }
 
-  async updatePassword(username, password) {}
+  update(userId, user) {
+    return userModel.update(userId, user);
+  }
 
-  deleteUser(userId) {
+  delete(userId) {
     return userModel.remove(userId);
   }
 }

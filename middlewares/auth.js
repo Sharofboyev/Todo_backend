@@ -7,8 +7,9 @@ async function auth(req, res, next) {
     req.userId = decoded.userId;
     return next();
   } catch (err) {
-    console.log(err);
-    return res.status(401).send({ success: false, error: "You are not authorized" });
+    return res
+      .status(401)
+      .send({ success: false, error: "You are not authorized" });
   }
 }
 

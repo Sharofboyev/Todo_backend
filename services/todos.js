@@ -4,8 +4,8 @@ class Todos {
     return todosModel.get(+limit, +offset, userId);
   }
 
-  async getOne(id) {
-    return todosModel.getOne(id);
+  async getOne(id, userId) {
+    return todosModel.getOne(id, userId);
   }
 
   create(createTodoDto) {

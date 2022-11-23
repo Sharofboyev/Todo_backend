@@ -12,6 +12,7 @@ router.post("/", upload.array("files", 10), async (req, res) => {
   const { files } = req;
   for (let i = 0; i < files.length; i++) {
     files[i].filename = files[i].originalname;
+    files[i].userId = req.userId;
     try {
       const fileData = await FileService.create(files[i]);
       fileArray.push({ uploaded: true, fileData });
@@ -37,12 +38,23 @@ router.get("/:id", async (req, res, next) => {
       .send({ success: false, error: "Provided fileId is not valid" });
 
   try {
-    const file = await FileService.getFile(req.params.id);
+    const file = await FileService.getOne(req.params.id, req.userId);
     if (!file)
       return res
         .status(404)
         .send({ success: false, error: "File with given fileId not found" });
-    else return res.sendFile(path.resolve(file.path));
+    /*return res.download(path.resolve(file.path), file.filename, (err) => {
+        return next(err);
+      });*/ else return res.sendFile(path.resolve(file.path));
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.get("/", async (req, res, next) => {
+  try {
+    const files = await FileService.get(req.userId);
+    return res.send(files);
   } catch (err) {
     return next(err);
   }
@@ -54,7 +66,8 @@ router.delete("/:id", async (req, res, next) => {
       .status(400)
       .send({ success: false, error: "Provided fileId is not valid" });
   try {
-    const file = await FileService.getFile(req.params.id);
+    const file = await FileService.removeFile(req.params.id);
+    console.log(file);
     if (!file)
       return res
         .status(404)
@@ -62,7 +75,6 @@ router.delete("/:id", async (req, res, next) => {
     else {
       const filePath = path.resolve(file.path);
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-      await FileService.removeFile(req.params.id);
       return res.send({ success: true });
     }
   } catch (err) {

@@ -1,24 +1,24 @@
 const fileModel = require("../models/files");
 
 class File {
-  getFile(fileId) {
-    return fileModel.get(fileId);
+  getOne(fileId, userId) {
+    return fileModel.getOne(fileId, userId);
   }
 
-  getAllFiles(userId) {
-    return fileModel.getAll(userId);
+  get(userId) {
+    return fileModel.get(userId);
   }
 
   create(file) {
     return fileModel.create(file);
   }
 
-  updateFile(fileId, file) {
-    return fileModel.update(fileId, file);
+  update(fileId, file, userId) {
+    return fileModel.update(fileId, file, userId);
   }
 
-  removeFile(fileId) {
-    return fileModel.remove(fileId);
+  remove(fileId, userId) {
+    return fileModel.remove(fileId, userId);
   }
 }
 

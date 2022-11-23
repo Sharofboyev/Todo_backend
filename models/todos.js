@@ -22,18 +22,18 @@ async function create(data) {
 }
 
 function get(limit, offset, userId) {
-  const allTodos = TodosModel.find({ userId: userId });
+  const allTodos = TodosModel.find({ userId });
   if (limit > 0) allTodos = allTodos.limit(limit);
   if (offset > 0) allTodos = allTodos.skip(offset);
   return allTodos;
 }
 
 function getOne(id) {
-  return TodosModel.findById(id);
+  return TodosModel.findOne({ _id: id, userId });
 }
 
 function update(id, todo, userId) {
-  return TodosModel.updateOne({ _id: id, userId: userId }, todo);
+  return TodosModel.updateOne({ _id: id, userId }, todo);
 }
 
 function remove(id, userId) {

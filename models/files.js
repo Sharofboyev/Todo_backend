@@ -25,24 +25,24 @@ async function create(data) {
   return await newFile.save();
 }
 
-function get(id) {
-  return FileModel.findById(id);
+function getOne(id, userId) {
+  return FileModel.findOne({ _id: id, userId });
 }
 
-function getAll(userId) {
+function get(userId) {
   return FileModel.find({ userId: userId });
 }
 
-function update(id, file) {
-  return FileModel.updateOne({ _id: id }, file);
+function update(id, file, userId) {
+  return FileModel.updateOne({ _id: id, userId }, file);
 }
 
-function remove(id) {
-  return FileModel.deleteOne({ _id: id });
+function remove(id, userId) {
+  return FileModel.findOneAndDelete({ _id: id, userId });
 }
 
 module.exports.create = create;
-module.exports.get = get;
+module.exports.getOne = getOne;
 module.exports.update = update;
 module.exports.remove = remove;
-module.exports.getAll = getAll;
+module.exports.get = get;
