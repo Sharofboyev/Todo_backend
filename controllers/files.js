@@ -53,7 +53,11 @@ router.get("/:id", async (req, res, next) => {
 
 router.get("/", async (req, res, next) => {
   try {
-    const files = await FileService.get(req.userId);
+    const files = await FileService.get(
+      req.userId,
+      req.query.limit,
+      req.query.offset
+    );
     return res.send(files);
   } catch (err) {
     return next(err);

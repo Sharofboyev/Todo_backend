@@ -5,8 +5,8 @@ class File {
     return fileModel.getOne(fileId, userId);
   }
 
-  get(userId) {
-    return fileModel.get(userId);
+  get(userId, limit, offset) {
+    return fileModel.get(userId, +limit, +offset);
   }
 
   create(file) {

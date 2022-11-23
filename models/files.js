@@ -29,8 +29,11 @@ function getOne(id, userId) {
   return FileModel.findOne({ _id: id, userId });
 }
 
-function get(userId) {
-  return FileModel.find({ userId: userId });
+function get(userId, limit, offset) {
+  const files = FileModel.find({ userId: userId });
+  if (limit > 0) files = files.limit(limit);
+  if (offset > 0) offset = files.skip(offset);
+  return files;
 }
 
 function update(id, file, userId) {
