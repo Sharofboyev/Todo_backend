@@ -10,7 +10,7 @@ const CreateSchema = new mongoose.Schema({
     required: true,
   },
   time: Date,
-  files: [{type: mongoose.Types.ObjectId, ref: "files"}],
+  files: [{ type: mongoose.Types.ObjectId, ref: "files" }],
   userId: mongoose.Types.ObjectId,
 });
 
@@ -21,11 +21,23 @@ async function create(data) {
   return await newTodo.save();
 }
 
-function get(limit, offset, userId) {
-  const allTodos = TodosModel.find({ userId }, {__v: 0});
+function get(limit, offset, userId, headerFilter, contentFilter) {
+  let allTodos = TodosModel.find({ userId }, { __v: 0 });
   if (limit > 0) allTodos = allTodos.limit(limit);
   if (offset > 0) allTodos = allTodos.skip(offset);
-  return allTodos.populate({path: "files", match: { userId }, select: {__v: 0, path: 0}});
+  if (headerFilter)
+    allTodos = allTodos.find({
+      header: { $regex: headerFilter, $options: "i" },
+    });
+  if (contentFilter)
+    allTodos = allTodos.find({
+      content: { $regex: contentFilter, $options: "i" },
+    });
+  return allTodos.populate({
+    path: "files",
+    match: { userId },
+    select: { __v: 0, path: 0 },
+  });
 }
 
 function getOne(id) {

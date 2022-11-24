@@ -1,7 +1,7 @@
 const todosModel = require("../models/todos");
 class Todos {
-  getAll(limit, offset, userId) {
-    return todosModel.get(+limit, +offset, userId);
+  getAll(limit, offset, userId, headerFilter, contentFilter) {
+    return todosModel.get(+limit, +offset, userId, headerFilter, contentFilter);
   }
 
   async getOne(id, userId) {

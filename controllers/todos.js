@@ -21,7 +21,9 @@ router.get("/", async (req, res, next) => {
     const todos = await todoService.getAll(
       req.query.limit,
       req.query.offset,
-      req.userId
+      req.userId,
+      req.query.header,
+      req.query.content
     );
     return res.send({ success: true, data: todos });
   } catch (err) {
