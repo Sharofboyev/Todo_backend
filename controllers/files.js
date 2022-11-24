@@ -10,6 +10,7 @@ const fs = require("fs");
 router.post("/", upload.array("files", 10), async (req, res) => {
   const fileArray = [];
   const { files } = req;
+  if (!files) return res.status(400).send({success: false, error: "Uploaded files are not valid"})
   for (let i = 0; i < files.length; i++) {
     files[i].filename = files[i].originalname;
     files[i].userId = req.userId;

@@ -22,10 +22,10 @@ async function create(data) {
 }
 
 function get(limit, offset, userId) {
-  const allTodos = TodosModel.find({ userId });
+  const allTodos = TodosModel.find({ userId }, {__v: 0});
   if (limit > 0) allTodos = allTodos.limit(limit);
   if (offset > 0) allTodos = allTodos.skip(offset);
-  return allTodos.populate("files");
+  return allTodos.populate({path: "files", match: { userId }, select: {__v: 0, path: 0}});
 }
 
 function getOne(id) {

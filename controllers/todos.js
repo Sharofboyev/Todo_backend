@@ -11,7 +11,7 @@ router.get("/", async (req, res, next) => {
         return res
           .status(400)
           .send({ success: false, error: "Received object id is not valid" });
-      const todo = await todoService.getOne(req.params.id);
+      const todo = await todoService.getOne(req.params.id, req.userId);
       if (!todo)
         return res
           .status(404)

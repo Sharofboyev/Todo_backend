@@ -30,7 +30,7 @@ function getOne(id, userId) {
 }
 
 function get(userId, limit, offset) {
-  const files = FileModel.find({ userId: userId });
+  const files = FileModel.find({ userId: userId }, {__v: 0, userId: 0, path: 0});
   if (limit > 0) files = files.limit(limit);
   if (offset > 0) offset = files.skip(offset);
   return files;
