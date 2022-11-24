@@ -10,7 +10,10 @@ const fs = require("fs");
 router.post("/", upload.array("files", 10), async (req, res) => {
   const fileArray = [];
   const { files } = req;
-  if (!files) return res.status(400).send({success: false, error: "Uploaded files are not valid"})
+  if (!files)
+    return res
+      .status(400)
+      .send({ success: false, error: "Uploaded files are not valid" });
   for (let i = 0; i < files.length; i++) {
     files[i].filename = files[i].originalname;
     files[i].userId = req.userId;
@@ -71,8 +74,7 @@ router.delete("/:id", async (req, res, next) => {
       .status(400)
       .send({ success: false, error: "Provided fileId is not valid" });
   try {
-    const file = await FileService.removeFile(req.params.id);
-    console.log(file);
+    const file = await FileService.remove(req.params.id, req.userId);
     if (!file)
       return res
         .status(404)
