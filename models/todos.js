@@ -10,7 +10,7 @@ const CreateSchema = new mongoose.Schema({
     required: true,
   },
   time: Date,
-  files: [String],
+  files: [{type: mongoose.Types.ObjectId, ref: "files"}],
   userId: mongoose.Types.ObjectId,
 });
 
@@ -25,7 +25,7 @@ function get(limit, offset, userId) {
   const allTodos = TodosModel.find({ userId: userId });
   if (limit > 0) allTodos = allTodos.limit(limit);
   if (offset > 0) allTodos = allTodos.skip(offset);
-  return allTodos;
+  return allTodos.populate("files");
 }
 
 function getOne(id) {
