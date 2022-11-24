@@ -87,12 +87,13 @@ router.put("/password", auth, async (req, res, next) => {
   const hashed = bcrypt.hashSync(value.password, 10);
   try {
     userService.update(req.userId, { password: hashed });
+    return res.send({ success: true });
   } catch (err) {
     return next(err);
   }
 });
 
-router.delete("/account", async (req, res, next) => {
+router.delete("/account", auth, async (req, res, next) => {
   try {
     await userService.delete(req.userId);
     return res.send({ success: true });
