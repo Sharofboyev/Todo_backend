@@ -6,18 +6,6 @@ const { isValidObjectId } = require("mongoose");
 
 router.get("/", async (req, res, next) => {
   try {
-    if (req.params.id) {
-      if (!isValidObjectId(req.params.id))
-        return res
-          .status(400)
-          .send({ success: false, error: "Received object id is not valid" });
-      const todo = await todoService.getOne(req.params.id, req.userId);
-      if (!todo)
-        return res
-          .status(404)
-          .send({ success: false, error: "Todo with given id not found" });
-      return res.send({ success: true, data: todo });
-    }
     const todos = await todoService.getAll(
       req.query.limit,
       req.query.offset,
@@ -26,6 +14,23 @@ router.get("/", async (req, res, next) => {
       req.query.content
     );
     return res.send({ success: true, data: todos });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.get("/:id", async (req, res, next) => {
+  try {
+    if (!isValidObjectId(req.params.id))
+      return res
+        .status(400)
+        .send({ success: false, error: "Received object id is not valid" });
+    const todo = await todoService.getOne(req.params.id, req.userId);
+    if (!todo)
+      return res
+        .status(404)
+        .send({ success: false, error: "Todo with given id not found" });
+    return res.send({ success: true, data: todo });
   } catch (err) {
     return next(err);
   }
@@ -61,7 +66,7 @@ router.patch("/:id", async (req, res, next) => {
   const { error, value } = Joi.object({
     header: Joi.string().optional().min(2).max(64),
     content: Joi.string().optional().max(1024),
-    files: Joi.array().items(Joi.string().required()).optional(),
+    files: Joi.array().items(Joi.string()).optional(),
     time: Joi.date().optional(),
   }).validate(req.body);
 

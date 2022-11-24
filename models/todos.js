@@ -36,12 +36,16 @@ function get(limit, offset, userId, headerFilter, contentFilter) {
   return allTodos.populate({
     path: "files",
     match: { userId },
-    select: { __v: 0, path: 0 },
+    select: { __v: 0, path: 0, userId: 0 },
   });
 }
 
-function getOne(id) {
-  return TodosModel.findOne({ _id: id, userId });
+function getOne(id, userId) {
+  return TodosModel.findOne({ _id: id, userId }, { __v: 0 }).populate({
+    path: "files",
+    match: { userId },
+    select: { __v: 0, path: 0, userId: 0 },
+  });
 }
 
 function update(id, todo, userId) {
@@ -57,3 +61,4 @@ module.exports.get = get;
 module.exports.getOne = getOne;
 module.exports.update = update;
 module.exports.remove = remove;
+module.exports.TodosModel = TodosModel;

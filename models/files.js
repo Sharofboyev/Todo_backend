@@ -1,4 +1,5 @@
 const mongoose = require("./index");
+const { TodosModel } = require("./todos");
 
 const CreateSchema = new mongoose.Schema({
   filename: {
@@ -30,7 +31,10 @@ function getOne(id, userId) {
 }
 
 function get(userId, limit, offset) {
-  const files = FileModel.find({ userId: userId }, {__v: 0, userId: 0, path: 0});
+  const files = FileModel.find(
+    { userId: userId },
+    { __v: 0, userId: 0, path: 0 }
+  );
   if (limit > 0) files = files.limit(limit);
   if (offset > 0) offset = files.skip(offset);
   return files;
@@ -40,8 +44,13 @@ function update(id, file, userId) {
   return FileModel.updateOne({ _id: id, userId }, file);
 }
 
-function remove(id, userId) {
-  return FileModel.findOneAndDelete({ _id: id, userId });
+async function remove(id, userId) {
+  const file = await FileModel.findOneAndDelete({ _id: id, userId });
+  await TodosModel.updateMany(
+    { files: { $elemMatch: { $eq: id } } },
+    { $pull: { files: id } }
+  );
+  return file;
 }
 
 module.exports.create = create;
