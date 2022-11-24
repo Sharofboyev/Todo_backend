@@ -1,7 +1,8 @@
 # Todo_backend
 Test project. Back-end part of Todo application for company WomanUp
 
-#Initialization
+## Initialization
+
 After cloning repository, copy .default.env file to the .env file and change variables if needed. MongoDB database and node with version 14+ is required for working properly. On command line run
 ```sh
 npm install
