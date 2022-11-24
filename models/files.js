@@ -15,6 +15,7 @@ const CreateSchema = new mongoose.Schema({
     type: Date,
     default: new Date(),
   },
+  userId: { type: String, required: true },
 });
 
 const FileModel = mongoose.model("files", CreateSchema);
@@ -24,20 +25,27 @@ async function create(data) {
   return await newFile.save();
 }
 
-function get(id) {
-  const file = FileModel.findById(id);
-  return file;
+function getOne(id, userId) {
+  return FileModel.findOne({ _id: id, userId });
 }
 
-function update(id, file) {
-  return FileModel.updateOne({ _id: id }, file);
+function get(userId, limit, offset) {
+  const files = FileModel.find({ userId: userId });
+  if (limit > 0) files = files.limit(limit);
+  if (offset > 0) offset = files.skip(offset);
+  return files;
 }
 
-function remove(id) {
-  return FileModel.deleteOne({ _id: id });
+function update(id, file, userId) {
+  return FileModel.updateOne({ _id: id, userId }, file);
+}
+
+function remove(id, userId) {
+  return FileModel.findOneAndDelete({ _id: id, userId });
 }
 
 module.exports.create = create;
-module.exports.get = get;
+module.exports.getOne = getOne;
 module.exports.update = update;
 module.exports.remove = remove;
+module.exports.get = get;

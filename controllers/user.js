@@ -5,6 +5,7 @@ const Joi = require("joi");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const config = require("../config");
+const auth = require("../middlewares/auth");
 
 router.post("/signup", async (req, res) => {
   // Validation of username and password
@@ -20,7 +21,10 @@ router.post("/signup", async (req, res) => {
 
   try {
     const hashed = bcrypt.hashSync(value.password, 10);
-    const userId = await userService.addUser(value.username, hashed); // New User should be added to the database by service
+    const userId = await userService.create({
+      username: value.username,
+      password: hashed,
+    });
 
     return res.status(201).send({ success: true, userId });
   } catch (err) {
@@ -43,7 +47,7 @@ router.post("/login", async (req, res, next) => {
       .send({ success: false, error: error.details[0].message });
 
   try {
-    const user = await userService.getUser(value.username);
+    const user = await userService.get(value.username);
     if (!user)
       return res.status(404).send({
         success: false,
@@ -65,6 +69,33 @@ router.post("/login", async (req, res, next) => {
         success: false,
         error: "Given username or password is incorrect",
       });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.put("/password", auth, async (req, res, next) => {
+  const { error, value } = Joi.object({
+    password: Joi.string().required().min(5).max(256),
+  }).validate(req.body);
+
+  if (error)
+    return res
+      .status(400)
+      .send({ success: false, error: error.details[0].message });
+
+  const hashed = bcrypt.hashSync(value.password, 10);
+  try {
+    userService.update(req.userId, { password: hashed });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.delete("/account", async (req, res, next) => {
+  try {
+    await userService.delete(req.userId);
+    return res.send({ success: true });
   } catch (err) {
     return next(err);
   }

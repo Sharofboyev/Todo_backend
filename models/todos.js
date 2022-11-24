@@ -22,22 +22,22 @@ async function create(data) {
 }
 
 function get(limit, offset, userId) {
-  const allTodos = TodosModel.find({ userId: userId });
+  const allTodos = TodosModel.find({ userId });
   if (limit > 0) allTodos = allTodos.limit(limit);
   if (offset > 0) allTodos = allTodos.skip(offset);
   return allTodos.populate("files");
 }
 
 function getOne(id) {
-  return TodosModel.findById(id);
+  return TodosModel.findOne({ _id: id, userId });
 }
 
-function update(id, todo) {
-  return TodosModel.updateOne({ _id: id }, todo);
+function update(id, todo, userId) {
+  return TodosModel.updateOne({ _id: id, userId }, todo);
 }
 
-function remove(id) {
-  return TodosModel.deleteOne({ _id: id });
+function remove(id, userId) {
+  return TodosModel.deleteOne({ _id: id, userId });
 }
 
 module.exports.create = create;
