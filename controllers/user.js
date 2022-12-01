@@ -28,7 +28,11 @@ router.post("/signup", async (req, res) => {
 
     return res.status(201).send({ success: true, userId });
   } catch (err) {
-    console.error(err);
+    if (err.code === 11000)
+      return res.status(400).send({
+        success: false,
+        error: `User with username ${value.username} already exists!`,
+      });
     return res
       .status(500)
       .send({ success: false, error: "Internal server error occured" });
