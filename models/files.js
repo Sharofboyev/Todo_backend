@@ -30,31 +30,28 @@ function getOne(id, userId) {
   return FileModel.findOne({ _id: id, userId });
 }
 
-function get(userId, limit, offset) {
+function get(userId, limit, offset, hasPath = false) {
   const files = FileModel.find(
     { userId: userId },
-    { __v: 0, userId: 0, path: 0 }
+    hasPath ? { __v: 0, userId: 0 } : { __v: 0, userId: 0, path: 0 }
   );
   if (limit > 0) files = files.limit(limit);
   if (offset > 0) offset = files.skip(offset);
   return files;
 }
 
-function update(id, file, userId) {
-  return FileModel.updateOne({ _id: id, userId }, file);
-}
-
-async function remove(id, userId) {
-  const file = await FileModel.findOneAndDelete({ _id: id, userId });
-  await TodosModel.updateMany(
-    { files: { $elemMatch: { $eq: id } } },
-    { $pull: { files: id } }
-  );
-  return file;
+async function remove(userId, fileId) {
+  if (fileId) {
+    const file = await FileModel.findOneAndDelete({ _id: fileId, userId });
+    await TodosModel.updateMany(
+      { files: { $elemMatch: { $eq: fileId } } },
+      { $pull: { files: fileId } }
+    );
+    return file;
+  } else return FileModel.deleteMany({ userId });
 }
 
 module.exports.create = create;
 module.exports.getOne = getOne;
-module.exports.update = update;
 module.exports.remove = remove;
 module.exports.get = get;

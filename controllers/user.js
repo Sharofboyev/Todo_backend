@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const config = require("../config");
 const auth = require("../middlewares/auth");
+const e = require("express");
 
 router.post("/signup", async (req, res) => {
   // Validation of username and password
@@ -90,8 +91,13 @@ router.put("/password", auth, async (req, res, next) => {
 
   const hashed = bcrypt.hashSync(value.password, 10);
   try {
-    userService.update(req.userId, { password: hashed });
-    return res.send({ success: true });
+    const updated = await userService.update(req.userId, { password: hashed });
+    if (updated.modifiedCount > 0) return res.send({ success: true });
+    else
+      return res.status(404).send({
+        success: false,
+        error: "Invalid token, user not found",
+      });
   } catch (err) {
     return next(err);
   }

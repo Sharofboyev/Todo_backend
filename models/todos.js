@@ -52,8 +52,9 @@ function update(id, todo, userId) {
   return TodosModel.updateOne({ _id: id, userId }, todo);
 }
 
-function remove(id, userId) {
-  return TodosModel.deleteOne({ _id: id, userId });
+function remove(userId, todoId) {
+  if (todoId) return TodosModel.deleteOne({ _id: todoId, userId });
+  else return TodosModel.deleteMany({ userId });
 }
 
 module.exports.create = create;
